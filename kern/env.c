@@ -270,7 +270,6 @@ int env_alloc(struct Env **new, u_int parent_id) {
 		return -E_NO_FREE_ENV;
 	}
 	e->env_parent_id = parent_id;
-	e->env_kill = 0;
 	/* Step 4: Initialize the sp and 'cp0_status' in 'e->env_tf'.
 	 *   Set the EXL bit to ensure that the processor remains in kernel mode during context
 	 * recovery. Additionally, set UM to 1 so that when ERET unsets EXL, the processor
@@ -398,7 +397,7 @@ void env_free(struct Env *e) {
 	u_int pdeno, pteno, pa;
 
 	/* Hint: Note the environment's demise.*/
-	//printk("[%08x] free env %08x\n", curenv ? curenv->env_id : 0, e->env_id);
+	printk("[%08x] free env %08x\n", curenv ? curenv->env_id : 0, e->env_id);
 
 	/* Hint: Flush all mapped pages in the user portion of the address space */
 	for (pdeno = 0; pdeno < PDX(UTOP); pdeno++) {
@@ -430,8 +429,6 @@ void env_free(struct Env *e) {
 	tlb_invalidate(e->env_asid, UVPT + (PDX(UVPT) << PGSHIFT));
 	/* Hint: return the environment to the free list. */
 	e->env_status = ENV_FREE;
-	e->env_kill = 0;
-	
 	LIST_INSERT_HEAD((&env_free_list), (e), env_link);
 	TAILQ_REMOVE(&env_sched_list, (e), env_sched_link);
 }
@@ -446,7 +443,7 @@ void env_destroy(struct Env *e) {
 	/* Hint: schedule to run a new environment. */
 	if (curenv == e) {
 		curenv = NULL;
-		//printk("i am killed ... \n", e->env_id);
+		printk("i am killed ... \n");
 		schedule(1);
 	}
 }

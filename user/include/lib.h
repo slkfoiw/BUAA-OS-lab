@@ -14,7 +14,7 @@
 #define pages ((const volatile struct Page *)UPAGES)
 
 // libos
-void exit(int) __attribute__((noreturn));
+void exit(void) __attribute__((noreturn));
 
 extern const volatile struct Env *env;
 
@@ -50,8 +50,7 @@ void syscall_putchar(int ch);
 int syscall_print_cons(const void *str, u_int num);
 u_int syscall_getenvid(void);
 void syscall_yield(void);
-int syscall_env_destroy(u_int envid, u_int return_value);
-int syscall_env_kill(u_int envid, u_int return_value);
+int syscall_env_destroy(u_int envid);
 int syscall_set_tlb_mod_entry(u_int envid, void (*func)(struct Trapframe *));
 int syscall_mem_alloc(u_int envid, void *va, u_int perm);
 int syscall_mem_map(u_int srcid, void *srcva, u_int dstid, void *dstva, u_int perm);
@@ -75,7 +74,7 @@ void ipc_send(u_int whom, u_int val, const void *srcva, u_int perm);
 u_int ipc_recv(u_int *whom, void *dstva, u_int *perm);
 
 // wait.c
-int wait(u_int envid);
+void wait(u_int envid);
 
 // console.c
 int opencons(void);
@@ -131,7 +130,6 @@ int sync(void);
 #define O_WRONLY 0x0001	 /* open for writing only */
 #define O_RDWR 0x0002	 /* open for reading and writing */
 #define O_ACCMODE 0x0003 /* mask for above modes */
-#define O_APPEND 0x0004
 #define O_CREAT 0x0100	 /* create if nonexistent */
 #define O_TRUNC 0x0200	 /* truncate to zero length */
 

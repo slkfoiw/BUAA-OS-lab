@@ -74,23 +74,12 @@ void __attribute__((noreturn)) sys_yield(void) {
  *  Returns 0 on success.
  *  Returns the original error if underlying calls fail.
  */
-int sys_env_destroy(u_int envid, u_int return_value) {
+int sys_env_destroy(u_int envid) {
 	struct Env *e;
 	try(envid2env(envid, &e, 1));
 
-	//printk("[%08x] destroying %08x\n", curenv->env_id, e->env_id);
-	e->env_return_value = return_value;
+	printk("[%08x] destroying %08x\n", curenv->env_id, e->env_id);
 	env_destroy(e);
-	return 0;
-}
-
-int sys_env_kill(u_int envid, u_int return_value) {
-	struct Env *e;
-	try(envid2env(envid, &e, 1));
-
-	//printk("[%08x] destroying %08x\n", curenv->env_id, e->env_id);
-	e->env_return_value = return_value;
-	e->env_kill = 1;
 	return 0;
 }
 
@@ -252,9 +241,6 @@ int sys_exofork(void) {
 
 	/* Step 1: Allocate a new env using 'env_alloc'. */
 	/* Exercise 4.9: Your code here. (1/4) */
-	if (curenv->env_kill) {
-		sys_env_destroy(0, -1);
-	}
 	try(env_alloc(&e, curenv->env_id));	
 	/* Step 2: Copy the current Trapframe below 'KSTACKTOP' to the new env's 'env_tf'. */
 	/* Exercise 4.9: Your code here. (2/4) */
@@ -435,9 +421,8 @@ int sys_ipc_try_send(u_int envid, u_int value, u_int srcva, u_int perm) {
 // XXX: kernel does busy waiting here, blocking all envs
 int sys_cgetc(void) {
 	int ch;
-	// while ((ch = scancharc()) == 0) {
-	// }
-	ch = scancharc();
+	while ((ch = scancharc()) == 0) {
+	}
 	return ch;
 }
 
@@ -535,7 +520,6 @@ void *syscall_table[MAX_SYSNO] = {
     [SYS_getenvid] = sys_getenvid,
     [SYS_yield] = sys_yield,
     [SYS_env_destroy] = sys_env_destroy,
-    [SYS_env_kill] = sys_env_kill,
     [SYS_set_tlb_mod_entry] = sys_set_tlb_mod_entry,
     [SYS_mem_alloc] = sys_mem_alloc,
     [SYS_mem_map] = sys_mem_map,

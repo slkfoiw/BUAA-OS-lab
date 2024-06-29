@@ -43,23 +43,12 @@ void schedule(int yield) {
 			TAILQ_REMOVE(&env_sched_list, e, env_sched_link);
 			if (e->env_status == ENV_RUNNABLE) {
 				TAILQ_INSERT_TAIL(&env_sched_list, e, env_sched_link);
-			} 
+			}
 		}
 		if (TAILQ_EMPTY(&env_sched_list)) {
 			panic("schedule: no runnable envs");
 		}
 		e = TAILQ_FIRST(&env_sched_list);
-		//10.实现kill
-		while (e->env_kill) {
-			struct Env *tmp;
-			TAILQ_FOREACH(tmp, &env_sched_list, env_sched_link) {
-				if (tmp->env_parent_id == e->env_id) {
-					tmp->env_kill = 1;
-				}
-			}
-			env_destroy(e);
-			e = TAILQ_FIRST(&env_sched_list);
-		}//
 		count = e->env_pri;
 	}
 	// printk("schedule end\n");

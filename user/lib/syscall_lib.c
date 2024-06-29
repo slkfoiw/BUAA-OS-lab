@@ -20,12 +20,8 @@ void syscall_yield(void) {
 	msyscall(SYS_yield);
 }
 
-int syscall_env_destroy(u_int envid, u_int return_value) {
-	return msyscall(SYS_env_destroy, envid, return_value);
-}
-
-int syscall_env_kill(u_int envid, u_int return_value) {
-	return msyscall(SYS_env_kill, envid, return_value);
+int syscall_env_destroy(u_int envid) {
+	return msyscall(SYS_env_destroy, envid);
 }
 
 int syscall_set_tlb_mod_entry(u_int envid, void (*func)(struct Trapframe *)) {

@@ -243,12 +243,8 @@ int write(int fdnum, const void *buf, u_int n) {
 	if ((r = fd_lookup(fdnum, &fd)) < 0 || (r = dev_lookup(fd->fd_dev_id, &dev)) < 0) {
 		return r;
 	}
-	
-	//8.实现追加重定向
-	if (fd->fd_omode & O_APPEND) {
-		struct Filefd *ffd = (struct Filefd *)fd;
-		fd->fd_offset = ffd->f_file.f_size;
-	} else if ((fd->fd_omode & O_ACCMODE) == O_RDONLY) {
+
+	if ((fd->fd_omode & O_ACCMODE) == O_RDONLY) {
 		return -E_INVAL;
 	}
 

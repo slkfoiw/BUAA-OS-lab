@@ -112,16 +112,7 @@ int spawn(char *prog, char **argv) {
 	// Return the error if 'open' fails.
 	int fd;
 	if ((fd = open(prog, O_RDONLY)) < 0) {
-		//1.实现不带 .b 后缀指令
-		int len = strlen(prog);
-		char tmp[100];
-		strcpy(tmp, prog);
-		tmp[len++] = '.';
-		tmp[len++] = 'b';
-		tmp[len++] = '\0';
-		if ((fd = open(tmp, O_RDONLY)) < 0) {
-			return fd;
-		}
+		return fd;
 	}
 
 	// Step 2: Read the ELF header (of type 'Elf32_Ehdr') from the file into 'elfbuf' using
@@ -227,10 +218,10 @@ int spawn(char *prog, char **argv) {
 	return child;
 
 err2:
-	syscall_env_destroy(child, r);
+	syscall_env_destroy(child);
 	return r;
 err1:
-	syscall_env_destroy(child, r);
+	syscall_env_destroy(child);
 err:
 	close(fd);
 	return r;

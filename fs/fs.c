@@ -614,7 +614,7 @@ int walk_path(char *path, struct File **pdir, struct File **pfile, char *lastele
 		name[path - p] = '\0';
 		path = skip_slash(path);
 		if (dir->f_type != FTYPE_DIR) {
-			return -E_NOT_FOUND_DIR;
+			return -E_NOT_FOUND;
 		}
 
 		if ((r = dir_lookup(dir, name, &file)) < 0) {
@@ -658,7 +658,7 @@ int file_open(char *path, struct File **file) {
 // Post-Condition:
 //  On success set *file to point at the file and return 0.
 //  On error return < 0.
-int file_create(char *path, struct File **file, int type) {
+int file_create(char *path, struct File **file) {
 	char name[MAXNAMELEN];
 	int r;
 	struct File *dir, *f;
@@ -676,7 +676,6 @@ int file_create(char *path, struct File **file, int type) {
 	}
 
 	strcpy(f->f_name, name);
-	f->f_type = type;//创建的文件类型
 	*file = f;
 	return 0;
 }

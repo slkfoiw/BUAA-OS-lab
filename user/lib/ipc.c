@@ -14,10 +14,6 @@ void ipc_send(u_int whom, u_int val, const void *srcva, u_int perm) {
 	while ((r = syscall_ipc_try_send(whom, val, srcva, perm)) == -E_IPC_NOT_RECV) {
 		syscall_yield();
 	}
-	if (r != 0) {
-		debugf("envid:%x whom:%x, val:%d\n",env->env_id, whom, val);
-		debugf("r:%d\n", r);
-	}
 	user_assert(r == 0);
 }
 

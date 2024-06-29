@@ -50,7 +50,7 @@ int cons_read(struct Fd *fd, void *vbuf, u_int n, u_int offset) {
 	while ((c = syscall_cgetc()) == 0) {
 		syscall_yield();
 	}
-	//debugf("%d ", c);
+
 	if (c != '\r') {
 		debugf("%c", c);
 	} else {

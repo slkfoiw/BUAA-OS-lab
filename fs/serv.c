@@ -152,14 +152,7 @@ void serve_open(u_int envid, struct Fsreq_open *rq) {
 		return;
 	}
 
-	if ((rq->req_omode & O_CREAT) && (r = file_create(rq->req_path, &f, FTYPE_REG)) < 0 &&
-	    r != -E_FILE_EXISTS) {
-		ipc_send(envid, r, 0, 0);
-		return;
-	}
-	
-	//创建目录
-	if ((rq->req_omode & O_MKDIR) && (r = file_create(rq->req_path, &f, FTYPE_DIR)) < 0 &&
+	if ((rq->req_omode & O_CREAT) && (r = file_create(rq->req_path, &f)) < 0 &&
 	    r != -E_FILE_EXISTS) {
 		ipc_send(envid, r, 0, 0);
 		return;
