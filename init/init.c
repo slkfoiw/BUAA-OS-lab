@@ -45,7 +45,7 @@ void mips_init(u_int argc, char **argv, char **penv, u_int ram_low_size) {
 	// mips_detect_memory(ram_low_size);
 	// mips_vm_init();
 	// page_init();
-	
+
 	// lab3:
 	// env_init();
 
